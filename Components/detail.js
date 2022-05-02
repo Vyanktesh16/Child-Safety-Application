@@ -7,6 +7,7 @@ import {
   View,
   Image,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -14,6 +15,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ScrollView } from 'react-native-gesture-handler';
 //import DatePicker from 'react-native-datepicker';
 import NumberPlease from 'react-native-number-please';
+import { AntDesign } from '@expo/vector-icons';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const initialValues = {
   childName: '',
@@ -30,7 +33,7 @@ const validationSchema = Yup.object({
   currentAddress: Yup.string().required('Required !'),
   permanentAddress: Yup.string().required('Required !'),
   phoneNumber: Yup.number().min(10).max(10).required('Required* !'),
-  dob: Yup.string().required('Required* !'),
+  pemail: Yup.string().email('Invalid Email Format').required('Required !'),
 });
 
 const Detail = ({ navigation }) => {
@@ -47,6 +50,10 @@ const Detail = ({ navigation }) => {
     console.log(formik.values);
     console.log(formik.errors);
     console.log(formik.touched);
+    const dob =
+      birthday[0].value + '-' + birthday[1].value + '-' + birthday[2].value;
+    console.log(dob);
+
     navigation.navigate('Photo');
   };
 
@@ -60,10 +67,23 @@ const Detail = ({ navigation }) => {
     { value: 'B-', label: 'B-' },
     { value: 'AB-', label: 'AB-' },
   ];
+  
+  const imageOptions = {
+    title: 'Select Image',
+    type: 'library',
+    options: {
+      maxHeight: 200,
+      maxWidth: 200,
+      selectionLimit: 0,
+      mediaType: 'photo',
+      includeBase64: false , 
+  } 
+}
+
   const initialBirthday = [
-    { id: 'day', value: 16 },
-    { id: 'month', value: 4 },
     { id: 'year', value: 1970 },
+    { id: 'month', value: 4 },
+    { id: 'day', value: 16 },
   ];
 
   const [birthday, setBirtday] = useState(initialBirthday);
@@ -76,10 +96,17 @@ const Detail = ({ navigation }) => {
 
   const [selectedOption, setSelectedOption] = useState('');
 
+  const openGallery = async () => {
+    const result = await launchImageLibrary(imageOptions);
+    console.log(result);
+  }
   const handleBg = (selectedOption) => {
     setSelectedOption(selectedOption);
   };
   console.log(birthday);
+  const [image, setImage] = React.useState(null);
+ // const addImage = () => {};
+
   return (
     <View style={styles.main}>
       <Image
@@ -116,6 +143,11 @@ const Detail = ({ navigation }) => {
             </Text>
           </Text>
         </View>
+        <View style={styles.view}>
+          <Icon name="calendar" size={20} color="#000" style={styles.dicon} />
+
+          <Text>Select Blood Group :</Text>
+        </View>
 
         <View style={styles.view}>
           <Icon name="users" size={20} color="#000" />
@@ -132,6 +164,22 @@ const Detail = ({ navigation }) => {
         {formik.touched.parentName && formik.errors.parentName ? (
           <Text style={styles.errors}>{formik.errors.parentName}</Text>
         ) : null}
+
+        <View style={styles.view}>
+          <Icon name="envelope" size={20} color="#000" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Parents Email"
+            keyboardType="email-address"
+            onChangeText={formik.handleChange('pemail')}
+            value={formik.values.email}
+            onBlur={formik.handleBlur('pemail')}
+          />
+        </View>
+        {formik.touched.pemail && formik.errors.pemail ? (
+          <Text style={styles.errors}>{formik.errors.pemail}</Text>
+        ) : null}
+
         <View style={styles.view}>
           <Icon name="street-view" size={20} color="#000" />
 
@@ -179,6 +227,19 @@ const Detail = ({ navigation }) => {
         {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
           <Text style={styles.errors}>{formik.errors.phoneNumber}</Text>
         ) : null}
+
+        {/* <Pressable style={styles.camera}>
+          <Text style={styles.text}>Open Camera</Text>
+        </Pressable> */}
+
+        <View style={styles.container}>
+          <TouchableOpacity onPress={openGallery} style={styles.uploadBtn}>
+            <AntDesign name="camera" size={20} color="black" />
+            <Text style={{ marginRight: 10, fontSize: 18, fontWeight: 'bold' }}>
+              {image ? 'Edit' : 'Upload'} Image
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <Pressable style={styles.button} onPress={onPressLearnMore}>
         <Text style={styles.text}>Continue ..</Text>
@@ -188,6 +249,18 @@ const Detail = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  uploadBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  container: {
+    width: 200,
+    height: 43,
+    backgroundColor: 'lightgrey',
+    margin: 30,
+  },
   errors: {
     color: 'red',
     marginTop: 5,
@@ -243,6 +316,17 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: '#59C0C7',
     padding: 9,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  camera: {
+    width: 200,
+    height: 30,
+    fontSize: 15,
+    margin: 15,
+    marginLeft: 20,
+    backgroundColor: 'grey',
+    padding: 4,
     borderRadius: 10,
     alignItems: 'center',
   },

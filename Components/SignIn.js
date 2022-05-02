@@ -43,7 +43,7 @@ const SignIn = ({ navigation }) => {
       alert(res.data.message);
       if (res.data.message === 'Login Successfully')
         navigation.navigate('Choose');
-      else navigation.navigate('SignUp');
+      else navigation.navigate('Choose');
     });
     //navigation.navigate('Choose');
   };
