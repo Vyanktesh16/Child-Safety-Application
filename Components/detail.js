@@ -25,6 +25,7 @@ const initialValues = {
   permanentAddress: '',
   phoneNumber: '',
   dob: '',
+  pemail: '',
 };
 
 const validationSchema = Yup.object({

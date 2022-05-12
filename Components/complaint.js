@@ -209,6 +209,7 @@ const initialValues = {
   permanentAddress: '',
   phoneNumber: '',
   dob: '',
+  pemail:'',
 };
 
 const validationSchema = Yup.object({
@@ -218,6 +219,8 @@ const validationSchema = Yup.object({
   permanentAddress: Yup.string().required('Required !'),
   phoneNumber: Yup.number().min(10).max(10).required('Required* !'),
   dob: Yup.string().required('Required* !'),
+  pemail: Yup.string().email('Invalid Email Format').required('Required !'),
+
 });
 
 const Detail = ({ navigation }) => {
@@ -234,7 +237,11 @@ const Detail = ({ navigation }) => {
     console.log(formik.values);
     console.log(formik.errors);
     console.log(formik.touched);
-    navigation.navigate('Photo');
+    const dob =
+      birthday[0].value + '-' + birthday[1].value + '-' + birthday[2].value;
+    console.log(dob);
+
+    navigation.navigate('Choose');
   };
 
   const options = [
@@ -307,7 +314,11 @@ const Detail = ({ navigation }) => {
             </Text>
           </Text>
         </View>
+        <View style={styles.view}>
+          <Icon name="calendar" size={20} color="#000" style={styles.dicon} />
 
+          <Text>Select Blood Group :</Text>
+        </View>
         <View style={styles.view}>
           <Icon name="users" size={20} color="#000" />
 
@@ -323,6 +334,22 @@ const Detail = ({ navigation }) => {
         {formik.touched.parentName && formik.errors.parentName ? (
           <Text style={styles.errors}>{formik.errors.parentName}</Text>
         ) : null}
+
+<View style={styles.view}>
+          <Icon name="envelope" size={20} color="#000" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Parents Email"
+            keyboardType="email-address"
+            onChangeText={formik.handleChange('pemail')}
+            value={formik.values.email}
+            onBlur={formik.handleBlur('pemail')}
+          />
+        </View>
+        {formik.touched.pemail && formik.errors.pemail ? (
+          <Text style={styles.errors}>{formik.errors.pemail}</Text>
+        ) : null}
+
         <View style={styles.view}>
           <Icon name="street-view" size={20} color="#000" />
 
